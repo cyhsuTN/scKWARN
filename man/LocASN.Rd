@@ -6,7 +6,7 @@
 \usage{
 LocASN(countmatrix, conditions = NULL, filter = FALSE, 
        gene_num_gezero = 3, cell_num_gezero = 10, 
-       numGeneforEst = 2000, divideforFast = FALSE, numDivide = NULL)
+       numGeneforEst = 2000, divideforFast = TRUE, numDivide = NULL)
 }
 \arguments{
 \item{countmatrix}{Input. Unnormalized count (sparse) matrix (genes by cells).}
@@ -27,11 +27,13 @@ The default value is 10.}
 \item{numGeneforEst}{Input (Optional). Use top \emph{numGeneforEst} (integer) genes detected in most cells to estimate scaling factors. The default value is 2000.}
 
 \item{divideforFast}{Input (Optional). A logic value to indicate if speeding up computation
-by randomly dividing cells in each condition into \emph{numDivide} smaller groups. It is recommended to use for a large
-number of cells, for example, > 30K cells. The default value is FALSE. Please input an integer in 
-\emph{numDivide} below if \emph{divideforFast} = TRUE.}
+by randomly dividing cells in each condition into \emph{numDivide} smaller groups. 
+Please input an integer in \emph{numDivide} below if \emph{divideforFast} = TRUE.
+The default value is TRUE.}
 
-\item{numDivide}{Input (Optional). An integer is required if \emph{divideforFast} = TRUE. The default value is # of cells in each condition divided by 5K if \emph{numDivide} = NULL.}
+\item{numDivide}{Input (Optional). An integer is required if \emph{divideforFast} = TRUE. 
+If \emph{numDivide} = NULL, the default value is # of cells in each condition divided by 5K 
+(i.e., no division for less than 10K cells).}
 
 }
 \value{

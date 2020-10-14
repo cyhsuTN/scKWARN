@@ -19,11 +19,12 @@
 #' @param numGeneforEst Input (Optional). Use top \emph{numGeneforEst} (integer) genes detected in most cells
 #' to estimate scaling factors. The default value is 2000.
 #' @param divideforFast Input (Optional). A logic value to indicate if speeding up computation
-#' by randomly dividing cells in each condition into \emph{numDivide} smaller groups. It is recommended to 
-#' use for a large size, for example, > 30K cells. The default value is FALSE. 
+#' by randomly dividing cells in each condition into \emph{numDivide} smaller groups.
 #' Please input an integer in \emph{numDivide} below if \emph{divideforFast} = TRUE.
+#' The default value is TRUE.
 #' @param numDivide Input (Optional). An integer is required if \emph{divideforFast} = TRUE.
-#' The default value is # of cells in each condition divided by 5K if \emph{numDivide} = NULL.
+#' If \emph{numDivide} = NULL, the default value is # of cells in each condition divided by 5K 
+#' (i.e., no division for less than 10K cells).
 
 
 #' @return \item{NormalizedData}{Matrix (genes by cells). Data matrix after normalization.}
@@ -50,7 +51,7 @@
 #' @export
 LocASN <- function(countmatrix, conditions = NULL, filter = FALSE, 
                    gene_num_gezero = 3, cell_num_gezero = 10, 
-                   numGeneforEst = 2000, divideforFast = FALSE, numDivide = NULL) {
+                   numGeneforEst = 2000, divideforFast = TRUE, numDivide = NULL) {
 
   ### determine if sparse matrix. Transform dense matric to sparse matrix if not.
   if (!is(countmatrix, "sparseMatrix")) countmatrix <- as(countmatrix, "sparseMatrix")
