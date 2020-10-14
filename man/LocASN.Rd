@@ -6,7 +6,7 @@
 \usage{
 LocASN(countmatrix, conditions = NULL, filter = FALSE, 
        gene_num_gezero = 3, cell_num_gezero = 10, 
-       numGeneforEst = 2000, divideforFast = FALSE, numDivide = 2)
+       numGeneforEst = 2000, divideforFast = FALSE, numDivide = NULL)
 }
 \arguments{
 \item{countmatrix}{Input. Unnormalized count (sparse) matrix (genes by cells).}
@@ -18,20 +18,20 @@ The default value, NULL, denotes all the cells are sampled from the same conditi
 
 \item{gene_num_gezero}{Input (Optional). A threshold (interger) to determine the inclusion of a gene.
 The gene included needs to be expressed in at least \emph{gene_num_gezero} cells.
-The default value is \emph{gene_num_gezero} = 3.}
+The default value is 3.}
 
 \item{cell_num_gezero}{Input (Optional). A threshold (interger) to determine the inclusion of a cell.
 The cell included needs to contain at least \emph{cell_num_gezero} expressed genes.
-The default value is \emph{cell_num_gezero} = 10.}
+The default value is 10.}
 
-\item{numGeneforEst}{Input (Optional). Use top \emph{numGeneforEst} (integer) highly expressed genes to estimate scaling factors. The default value is \emph{numGeneforEst} = 2000.}
+\item{numGeneforEst}{Input (Optional). Use top \emph{numGeneforEst} (integer) genes detected in most cells to estimate scaling factors. The default value is 2000.}
 
 \item{divideforFast}{Input (Optional). A logic value to indicate if speeding up computation
-by randomly dividing cells into \emph{numDivide} groups. It is recommended to use for a large
-number of cells, for example, > 50K cells. The default value is FALSE. Please input an integer in 
-\emph{numDivide} below if \emph{divideforFast} = TRUE}
+by randomly dividing cells in each condition into \emph{numDivide} smaller groups. It is recommended to use for a large
+number of cells, for example, > 30K cells. The default value is FALSE. Please input an integer in 
+\emph{numDivide} below if \emph{divideforFast} = TRUE.}
 
-\item{numDivide}{Input (Optional). An integer is required if \emph{divideforFast} = TRUE. Suggest \emph{numDivide} = #cells/10K.}
+\item{numDivide}{Input (Optional). An integer is required if \emph{divideforFast} = TRUE. The default value is # of cells in each condition divided by 5K if \emph{numDivide} = NULL.}
 
 }
 \value{
