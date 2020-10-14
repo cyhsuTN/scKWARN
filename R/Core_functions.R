@@ -45,10 +45,10 @@ asnfast6 <- function(test_data) {
 
 
 ### a function for rescale
-scale_matrix6 <- function(mg, cgs, qc_conditions, qc_countmatrix) {
+scale_matrix7 <- function(mg, cgs, qc_conditions, qc_countmatrix) {
   
   indxall <- qc_countmatrix != 0
-  qc_countmatrix[indxall] <- log(qc_countmatrix[indxall])
+  qc_countmatrix@x <- log(qc_countmatrix@x)
   refall <- rowSums(qc_countmatrix)/rowSums(indxall)
   
   remg <- rep(NA, ncol(qc_countmatrix))

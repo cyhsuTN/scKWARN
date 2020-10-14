@@ -12,18 +12,18 @@
 #' the details of gene_num_gezero and cell_num_gezero for input. The default value is FALSE.
 #' @param gene_num_gezero Input (Optional). A threshold (interger) to determine the inclusion of a gene.
 #' The gene included needs to be expressed in at least \emph{gene_num_gezero} cells.
-#' The default value is \emph{gene_num_gezero} = 3.
+#' The default value is 3.
 #' @param cell_num_gezero Input (Optional). A threshold (interger) to determine the inclusion of a cell.
 #' The cell included needs to contain at least \emph{cell_num_gezero} expressed genes.
-#' The default value is \emph{cell_num_gezero} = 10.
-#' @param numGeneforEst Input (Optional). Use top \emph{numGeneforEst} (integer) highly expressed genes
-#' to estimate scaling factors. The default value is \emph{numGeneforEst} = 2000.
+#' The default value is 10.
+#' @param numGeneforEst Input (Optional). Use top \emph{numGeneforEst} (integer) genes detected in most cells
+#' to estimate scaling factors. The default value is 2000.
 #' @param divideforFast Input (Optional). A logic value to indicate if speeding up computation
-#' by randomly dividing cells into \emph{numDivide} groups. It is recommended to use for a large
-#' number of cells, for example, > 50K cells. The default value is FALSE. Please input an integer in 
-#' \emph{numDivide} below if \emph{divideforFast} = TRUE.
+#' by randomly dividing cells in each condition into \emph{numDivide} smaller groups. It is recommended to 
+#' use for a large size, for example, > 30K cells. The default value is FALSE. 
+#' Please input an integer in \emph{numDivide} below if \emph{divideforFast} = TRUE.
 #' @param numDivide Input (Optional). An integer is required if \emph{divideforFast} = TRUE.
-#' Suggest \emph{numDivide} = #cells/10K.
+#' The default value is # of cells in each condition divided by 5K if \emph{numDivide} = NULL.
 
 
 #' @return \item{NormalizedData}{Matrix (genes by cells). Data matrix after normalization.}
@@ -50,13 +50,25 @@
 #' @export
 LocASN <- function(countmatrix, conditions = NULL, filter = FALSE, 
                    gene_num_gezero = 3, cell_num_gezero = 10, 
-                   numGeneforEst = 2000, divideforFast = FALSE, numDivide = 2) {
+                   numGeneforEst = 2000, divideforFast = FALSE, numDivide = NULL) {
 
   ### determine if sparse matrix. Transform dense matric to sparse matrix if not.
   if (!is(countmatrix, "sparseMatrix")) countmatrix <- as(countmatrix, "sparseMatrix")
   
-  if (is.null(conditions) & divideforFast) {
-    set.seed(200); conditions <- sample(c(1:numDivide), ncol(countmatrix), replace = T)
+  ### whether to randomly divide cells in each condition into \emph{numDivide} groups
+  if (divideforFast) {
+    set.seed(2020)
+    if (is.null(conditions)) {
+      if (is.null(numDivide)) autonum <- max(1, floor(ncol(countmatrix)/5000)) else autonum <- numDivide
+      conditions <- sample(c(1:autonum), ncol(countmatrix), replace = T)
+    } else {
+      cgs <- unique(conditions)
+      for (k in 1:length(cgs)) {
+        ck <- which(conditions == cgs[k])
+        if (is.null(numDivide)) autonum <- max(1, floor(length(ck)/5000)) else autonum <- numDivide
+        conditions[ck] <- paste0(conditions[ck], "_", sample(c(1:autonum), length(ck), replace = T))
+      }
+    }  
   }
 
   if (filter) {
@@ -78,7 +90,7 @@ LocASN <- function(countmatrix, conditions = NULL, filter = FALSE,
   }
  
   genesuse <- head(sort(rowSums(countmatrix > 0), index.return = T, decreasing = T)$ix, numGeneforEst)
-  if (is.null(conditions)) {
+  if (is.null(conditions) | length(unique(conditions))==1) {
     remg <- asnfast6(countmatrix[genesuse,])
     countmatrix <- t(t(countmatrix)/remg)
   } else {
@@ -90,7 +102,7 @@ LocASN <- function(countmatrix, conditions = NULL, filter = FALSE,
       countmatrix[, ck] <- t(t(countmatrix[, ck, drop = FALSE])/mg[ck])
     }
     ### rescale multiple normailzed matrices
-    remg <- scale_matrix6(mg, cgs, conditions, countmatrix)
+    remg <- scale_matrix7(mg, cgs, conditions, countmatrix[genesuse,])
     remg <- remg/median(remg)
     countmatrix  <- t(t(countmatrix) * mg / remg)
   }
