@@ -23,7 +23,7 @@
 #' Please input an integer in \emph{numDivide} below if \emph{divideforFast} = TRUE.
 #' The default value is TRUE.
 #' @param numDivide Input (Optional). An integer is required if \emph{divideforFast} = TRUE.
-#' If \emph{numDivide} = NULL, the default value is # of cells in each condition divided by 5K 
+#' \emph{numDivide} = NULL denotes # of cells in each condition divided by 5K 
 #' (i.e., no division for less than 10K cells).
 
 
