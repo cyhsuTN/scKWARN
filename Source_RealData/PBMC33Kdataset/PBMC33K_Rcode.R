@@ -53,7 +53,6 @@ N_1 <- ncol(used_data_1)
   data2[DEg[(G1+1):TG], ] <- data2[DEg[(G1+1):TG], ] * sample(seq(1.25,5,0.25), G2, replace = T)
 
   test_data <- cbind(data1, data2)
-
   test_data <- round(test_data)
 
   ### delete some genes
