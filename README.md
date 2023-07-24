@@ -1,5 +1,3 @@
 # scKWARN
 Single-cell RNA Normalization method
-1. R packages required: Rcpp, Matrix
-2. Install package: scKWARN_1.0.7.tar.gz
-3. Please see scKWARN.pdf for details of use.
+1. Download scKWARN_1.1.0.tar.gz and install it.
