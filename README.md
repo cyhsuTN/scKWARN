@@ -1,6 +1,4 @@
-# scKWARN
-Single-cell RNA Normalization method
-
+# scKWARN: a method to normalize single-cell RNAseq data
 Chih-Yuan Hsu
 
 ## Installation
