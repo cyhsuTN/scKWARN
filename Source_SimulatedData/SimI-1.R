@@ -35,18 +35,21 @@ for (iter in 1:100) {
 
       ref_data1 <- t(sapply(1:G, function(g) {
           dropout <- rbinom(n1, size = 1, prob = 0.4)
+          log_ygj <- (1 - dropout) * (beta0g[g] +  beta1g[g] * log(1000000) + rnorm(n1, 0, sdg[g]))
           ygj <- round(exp(log_ygj)-1, 0)
           ygj[ygj < 0] <- 0
           ygj
       }))
       ref_data2 <- t(sapply(1:G, function(g) {
           dropout <- rbinom(n2, size = 1, prob = 0.4)
+          log_ygj <- (1 - dropout) * (beta0g[g] +  beta1g[g] * log(1000000) + rnorm(n2, 0, sdg[g]))
           ygj <- round(exp(log_ygj)-1, 0)
           ygj[ygj < 0] <- 0
           ygj
       }))
       ref_data3 <- t(sapply(1:G, function(g) {
           dropout <- rbinom(n3, size = 1, prob = 0.4) # basic zero
+          log_ygj <- (1 - dropout) * (beta0g[g] +  beta1g[g] * log(1000000) + rnorm(n3, 0, sdg[g]))
           ygj <- round(exp(log_ygj)-1, 0)
           ygj[ygj < 0] <- 0
           ygj
