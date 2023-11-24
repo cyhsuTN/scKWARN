@@ -13,7 +13,8 @@ LocASN(
   numGeneforEst = 2000,
   divideforFast = TRUE,
   numDivide = NULL,
-  bw.method = "SJ"
+  bw.method = "SJ",
+  cutoff = 2
 )
 }
 \arguments{
@@ -25,11 +26,11 @@ The default value, NULL, denotes all the cells are sampled from the same conditi
 \item{filter}{Input (Optional). A logic value to indicate if need data filtering. If TRUE, please see
 the details of gene_num_gezero and cell_num_gezero for input. The default value is FALSE.}
 
-\item{gene_num_gezero}{Input (Optional). A threshold (interger) to determine the inclusion of a gene.
+\item{gene_num_gezero}{Input (Optional). A threshold (integer) to determine the inclusion of a gene.
 The gene included needs to be expressed in at least \emph{gene_num_gezero} cells.
 The default value is 3.}
 
-\item{cell_num_gezero}{Input (Optional). A threshold (interger) to determine the inclusion of a cell.
+\item{cell_num_gezero}{Input (Optional). A threshold (integer) to determine the inclusion of a cell.
 The cell included needs to contain at least \emph{cell_num_gezero} expressed genes.
 The default value is 10.}
 
@@ -51,6 +52,10 @@ that means no division for conditions with less than 3K cells.}
 \item{bw.method}{Input (Optional). A method to estimate the bandwidths in Kernel weighting. 
 The default method uses "SJ" (SJ bandwidth, Sheather and Jones, 1991). 
 Otherwise, uses "RoT" (rule-of-thumb, Silverman, 1986).}
+
+\item{cutoff}{Input (Optional). To be more computationally efficient,
+low weights will be set to zeros when cell distances are larger than 
+\emph{cutoff} times bandwidths. The default value = 2.}
 }
 \value{
 \item{NormalizedData}{Matrix (genes by cells). Data matrix after normalization.}
@@ -67,13 +72,13 @@ A function of normalizing single cell RNA-seq gene expression.
 \examples{
 set.seed(12345)
 G <- 2000; n <- 600 # G: number of genes, n: number of cells
-NB_cell <- function(j) rnbinom(G, size = 0.1, mu = rgamma(G, shape = 2, rate = 2))
+mu <- rgamma(G, shape = 2, rate = 2)
+NB_cell <- function(j) rnbinom(G, size = 0.1, mu = mu)
 countsimdata <- sapply(1:n, NB_cell)
 colnames(countsimdata) <- paste("c", 1:n, sep = "_")
 rownames(countsimdata) <- paste("g", 1:G, sep = "_")
 Result <- LocASN(countmatrix = as(countsimdata,"sparseMatrix"))
 Result$NormalizedData[1:10,1:10]; Result$scalingFactor[1:10]
-
 #conditions <- c(rep(1,n/2), rep(2,n/2))
 #Result2 <- LocASN(countmatrix = countsimdata, conditions = conditions)
 #Result2$NormalizedData[1:10,1:10]; Result2$scalingFactor[1:10]
