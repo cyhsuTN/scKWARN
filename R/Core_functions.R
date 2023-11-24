@@ -1,7 +1,7 @@
 
 
 ### a function for normalization
-asnfast7 <- function(test_data, bw.method) {
+asnfast8 <- function(test_data, bw.method, cutoff) {
 
   colnames(test_data) <- NULL
   rownames(test_data) <- NULL
@@ -11,18 +11,19 @@ asnfast7 <- function(test_data, bw.method) {
   ## quantiles for expression profiles of cells
   sj <- apply(test_data, 2, function(x) quantile(log(x[x>0]), probs = c(.25, .5, .75)) )
   sj <- sj[apply(sj, 1, sd) != 0, , drop = FALSE]
+  
   ### To calculate PC1
   pca <- prcomp(t(sj), scale = TRUE) # n by p matrix for prcomp
   r.all <- c(pca$x[,1]) ## use the first component
-  #r.all <- c(t(pca$rotation[, 1]) %*% sj) ## use the first component
+  
   ### list non-zero cells for every gene
-  #nonzero.g <- apply(test_data, 1, function(x) {cc <- which(x>0); rbind(cc, log(x[cc]), deparse.level = 0)})
   nonzero.g <- apply(test_data, 1, function(x) {cc <- which(x>0); list(rbind(cc, log(x[cc]), deparse.level = 0))})
   nonzero.g <- lapply(nonzero.g, function(x) matrix(unlist(x), nrow=2))
+  
   ### reference profile
   AllAve <- unlist(lapply(nonzero.g, function(x) mean(x[2,])))
+  
   ### list non-zero genes for every cell
-  #nonzero.c <- apply(test_data, 2, function(x) which(x>0) )
   nonzero.c <- apply(test_data, 2, function(x) list(which(x>0)) )
   nonzero.c <- lapply(nonzero.c, function(x) c(unlist(x)))
   
@@ -44,7 +45,7 @@ asnfast7 <- function(test_data, bw.method) {
   }
   
   ### expression profile for each cell
-  LocAve <- calculateLocAve(nonzero.c, nonzero.g, r.all, hh)
+  LocAve <- calculateLocAve(nonzero.c, nonzero.g, r.all, hh, cutoff)
   
   ### global scaling factor for each cell
   logscalingF <- rep(0, length(LocAve))

@@ -10,10 +10,10 @@
 #' The default value, NULL, denotes all the cells are sampled from the same condition.
 #' @param filter  Input (Optional). A logic value to indicate if need data filtering. If TRUE, please see
 #' the details of gene_num_gezero and cell_num_gezero for input. The default value is FALSE.
-#' @param gene_num_gezero Input (Optional). A threshold (interger) to determine the inclusion of a gene.
+#' @param gene_num_gezero Input (Optional). A threshold (integer) to determine the inclusion of a gene.
 #' The gene included needs to be expressed in at least \emph{gene_num_gezero} cells.
 #' The default value is 3.
-#' @param cell_num_gezero Input (Optional). A threshold (interger) to determine the inclusion of a cell.
+#' @param cell_num_gezero Input (Optional). A threshold (integer) to determine the inclusion of a cell.
 #' The cell included needs to contain at least \emph{cell_num_gezero} expressed genes.
 #' The default value is 10.
 #' @param numGeneforEst Input (Optional). Use top \emph{numGeneforEst} (integer) genes according to 
@@ -31,6 +31,9 @@
 #' @param bw.method Input (Optional). A method to estimate the bandwidths in Kernel weighting. 
 #' The default method uses "SJ" (SJ bandwidth, Sheather and Jones, 1991). 
 #' Otherwise, uses "RoT" (rule-of-thumb, Silverman, 1986).
+#' @param cutoff Input (Optional). To be more computationally efficient,
+#' low weights will be set to zeros when cell distances are larger than 
+#' \emph{cutoff} times bandwidths. The default value = 2.
 
 
 #' @return \item{NormalizedData}{Matrix (genes by cells). Data matrix after normalization.}
@@ -40,7 +43,8 @@
 
 #' @examples set.seed(12345)
 #' @examples G <- 2000; n <- 600 # G: number of genes, n: number of cells
-#' @examples NB_cell <- function(j) rnbinom(G, size = 0.1, mu = rgamma(G, shape = 2, rate = 2))
+#' @examples mu <- rgamma(G, shape = 2, rate = 2)
+#' @examples NB_cell <- function(j) rnbinom(G, size = 0.1, mu = mu)
 #' @examples countsimdata <- sapply(1:n, NB_cell)
 #' @examples colnames(countsimdata) <- paste("c", 1:n, sep = "_")
 #' @examples rownames(countsimdata) <- paste("g", 1:G, sep = "_")
@@ -57,13 +61,18 @@
 #' @export
 LocASN <- function(countmatrix, conditions = NULL, filter = FALSE, 
                    gene_num_gezero = 3, cell_num_gezero = 10, 
-                   numGeneforEst = 2000, divideforFast = TRUE, numDivide = NULL, bw.method = "SJ") {
+                   numGeneforEst = 2000, divideforFast = TRUE, numDivide = NULL, 
+                   bw.method = "SJ", cutoff=2) {
 
   ### determine if sparse matrix. Transform dense matrix to sparse matrix if not.
   if (!is(countmatrix, "sparseMatrix")) countmatrix <- as(countmatrix, "sparseMatrix")
   
   ### whether to randomly divide cells in each condition into \emph{numDivide} groups
   if (divideforFast) {
+    ### set seed locally
+    old <- .Random.seed
+    on.exit( { .Random.seed <<- old } )
+    
     set.seed(2020)
     if (is.null(conditions)) {
       if (is.null(numDivide)) autonum <- max(1, ceiling(ncol(countmatrix)/3000)) else autonum <- numDivide
@@ -101,14 +110,14 @@ LocASN <- function(countmatrix, conditions = NULL, filter = FALSE,
   genesuse <- head(order(rowSums(countmatrix > 0), decreasing = T), numGeneforEst)
   
   if (is.null(conditions) | length(unique(conditions))==1) {
-    remg <- asnfast7(countmatrix[genesuse,], bw.method)
+    remg <- asnfast8(countmatrix[genesuse,], bw.method, cutoff)
     countmatrix <- t(t(countmatrix)/remg)
   } else {
     cgs <- unique(conditions)
     mg <- rep(NA, ncol(countmatrix))
     for(k in 1:length(cgs)) {
       ck <- which(conditions == cgs[k])
-      mg[ck] <- asnfast7(countmatrix[genesuse, ck, drop = FALSE], bw.method)
+      mg[ck] <- asnfast8(countmatrix[genesuse, ck, drop = FALSE], bw.method, cutoff)
       countmatrix[, ck] <- t(t(countmatrix[, ck, drop = FALSE])/mg[ck])
     }
     ### rescale multiple normailzed matrices
