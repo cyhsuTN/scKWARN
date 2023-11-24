@@ -11,8 +11,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // calculateLocAve
-List calculateLocAve(List nonzeroc, List nonzerog, NumericVector r, NumericVector h);
-RcppExport SEXP _scKWARN_calculateLocAve(SEXP nonzerocSEXP, SEXP nonzerogSEXP, SEXP rSEXP, SEXP hSEXP) {
+List calculateLocAve(List nonzeroc, List nonzerog, NumericVector r, NumericVector h, const double a);
+RcppExport SEXP _scKWARN_calculateLocAve(SEXP nonzerocSEXP, SEXP nonzerogSEXP, SEXP rSEXP, SEXP hSEXP, SEXP aSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,13 +20,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< List >::type nonzerog(nonzerogSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type r(rSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type h(hSEXP);
-    rcpp_result_gen = Rcpp::wrap(calculateLocAve(nonzeroc, nonzerog, r, h));
+    Rcpp::traits::input_parameter< const double >::type a(aSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculateLocAve(nonzeroc, nonzerog, r, h, a));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_scKWARN_calculateLocAve", (DL_FUNC) &_scKWARN_calculateLocAve, 4},
+    {"_scKWARN_calculateLocAve", (DL_FUNC) &_scKWARN_calculateLocAve, 5},
     {NULL, NULL, 0}
 };
 
