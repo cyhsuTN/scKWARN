@@ -3,7 +3,7 @@ Chih-Yuan Hsu
 
 Feb. 04, 2024
 
-Hsu CY, Chang CJ, Liu Q, Shyr Y. scKWARN: Kernel-weighted-average robust normalization for single-cell RNA-seq data. Bioinformatics. 2024 Jan 17:btae008. doi: 10.1093/bioinformatics/btae008
+Hsu CY, Chang CJ, Liu Q, Shyr Y. (2024) scKWARN: Kernel-weighted-average robust normalization for single-cell RNA-seq data. Bioinformatics. doi: 10.1093/bioinformatics/btae008.
 
 ## Installation
 Download scKWARN_1.1.2.tar.gz and locally install it, or execute the following code:
