@@ -69,7 +69,7 @@ scale_matrix7 <- function(mg, cgs, qc_conditions, qc_countmatrix) {
   for(k in 1:length(cgs)) {
     ck <- which(qc_conditions == cgs[k])
     remg[ck] <- mg[ck] * 
-      exp(median(rowSums(qc_countmatrix[, ck, drop = FALSE])/rowSums(indxall[, ck, drop = FALSE]) - refall))
+      exp(median(rowSums(qc_countmatrix[, ck, drop = FALSE])/rowSums(indxall[, ck, drop = FALSE]) - refall, na.rm=T))
   }
   remg
   
