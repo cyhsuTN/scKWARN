@@ -6,8 +6,8 @@
 #' @importFrom stats density median prcomp quantile sd bw.nrd0 bw.SJ
 
 #' @param countmatrix Input. Unnormalized count matrix (genes by cells).
-#' @param conditions  Input (Optional). Indicate which cells are sampled from the same conditions.
-#' The default value, NULL, denotes all the cells are sampled from the same condition.
+#' @param conditions  Input (Optional). Condition/sample number of each cell.
+#' The default = NULL, denoting all cells are from the same condition/sample.
 #' @param filter  Input (Optional). A logic value to indicate if need data filtering. If TRUE, please see
 #' the details of gene_num_gezero and cell_num_gezero for input. The default value is FALSE.
 #' @param gene_num_gezero Input (Optional). A threshold (integer) to determine the inclusion of a gene.
