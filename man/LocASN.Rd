@@ -20,8 +20,8 @@ LocASN(
 \arguments{
 \item{countmatrix}{Input. Unnormalized count matrix (genes by cells).}
 
-\item{conditions}{Input (Optional). Indicate which cells are sampled from the same conditions.
-The default value, NULL, denotes all the cells are sampled from the same condition.}
+\item{conditions}{Input (Optional). Condition/sample number of each cell.
+The default = NULL, denoting all cells are from the same condition/sample.}
 
 \item{filter}{Input (Optional). A logic value to indicate if need data filtering. If TRUE, please see
 the details of gene_num_gezero and cell_num_gezero for input. The default value is FALSE.}
